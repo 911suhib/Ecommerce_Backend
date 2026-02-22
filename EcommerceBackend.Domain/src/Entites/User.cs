@@ -1,4 +1,6 @@
-﻿namespace EcommerceBackend.Domain.Entities
+﻿using EcommerceBackend.Domain.src.Entites;
+
+namespace EcommerceBackend.Domain.Entities
 {
 	// Customer
 	public class User : BaseEntity
@@ -12,5 +14,8 @@
 
         public required UserRole Role { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>();
-    }
+
+		public ICollection<UserRefreshToken> RefreshTokens { get; set; }
+
+	}
 }

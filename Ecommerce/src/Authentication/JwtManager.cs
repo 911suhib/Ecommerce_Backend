@@ -2,6 +2,7 @@
 using EcommearceBackend.Business.src.Services.Abstractions;
 using EcommerceBackend.Domain.Entities;
 using EcommerceBackend.Domain.src.Abstractions;
+using EcommerceBackend.Framework.src.Database;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,10 +16,15 @@ namespace EcommerceBackend.Framework.src.Authentication
 
 		private readonly JwtOptions _options;
 		private readonly IUserRepository _userRepository;
-
-		public JwtManager(IOptions<JwtOptions> options)
+		private readonly IRefreshTokenRepository _refreshTokenRepository;
+		private readonly AppDbContext _dbcontext;
+		public JwtManager(IOptions<JwtOptions> options, IRefreshTokenRepository refreshTokenRepository, IUserRepository userRepository,AppDbContext dbContext)
 		{
+
 			_options = options.Value;	
+			_userRepository = userRepository;
+			_refreshTokenRepository = refreshTokenRepository;
+			_dbcontext = dbContext;
 		}
 
 
@@ -38,7 +44,7 @@ namespace EcommerceBackend.Framework.src.Authentication
 			{
 				Issuer = _options.Issuer,
 				Audience = _options.Audience,
-				Expires = DateTime.UtcNow.AddDays(1),
+				Expires = DateTime.UtcNow.AddMinutes(2),
 				Subject = new ClaimsIdentity(claims),
 				SigningCredentials = signingCredentials
 			};
@@ -47,9 +53,26 @@ namespace EcommerceBackend.Framework.src.Authentication
 			return tokenValue;
 		}
 
-		public Task<string> RefreshAccessToken(string refreshToken)
+		public async Task<string> RefreshAccessToken(string refreshToken)
 		{
-			throw new NotImplementedException();
+		 var token=await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+			if (token == null || token.IsRevoked)
+				throw new SecurityTokenException("Invalid refresh Token");
+
+			if (token.ExpiryDate < DateTime.UtcNow)
+				throw new SecurityTokenException("Refresh token expired");
+
+			token.IsRevoked = true;
+		    await _dbcontext.SaveChangesAsync();
+			var user =await _userRepository.GetByIdAsync(token.UserId);
+
+			return  GenerateAccessToken(user);
+
 		}
+		public async Task RevokeAsync(string refreshToken)
+		{
+			 await _refreshTokenRepository.RevokeAsync(refreshToken);	
+		}
+
 	}
 }

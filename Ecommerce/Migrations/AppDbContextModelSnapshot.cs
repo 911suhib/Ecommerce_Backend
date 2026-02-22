@@ -228,6 +228,34 @@ namespace EcommerceBackend.Framework.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("EcommerceBackend.Domain.src.Entites.UserRefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRefreshToken");
+                });
+
             modelBuilder.Entity("EcommerceBackend.Domain.Entities.Order", b =>
                 {
                     b.HasOne("EcommerceBackend.Domain.Entities.User", "User")
@@ -277,6 +305,17 @@ namespace EcommerceBackend.Framework.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("EcommerceBackend.Domain.src.Entites.UserRefreshToken", b =>
+                {
+                    b.HasOne("EcommerceBackend.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EcommerceBackend.Domain.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -300,6 +339,8 @@ namespace EcommerceBackend.Framework.Migrations
             modelBuilder.Entity("EcommerceBackend.Domain.Entities.User", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }
