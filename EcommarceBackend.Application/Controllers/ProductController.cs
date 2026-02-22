@@ -1,6 +1,7 @@
 ﻿using EcommearceBackend.Business.src.Dtos.Product;
 using EcommearceBackend.Business.src.Services.Abstractions;
 using EcommerceBackend.Domain.src.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommarceBackend.Application.Controllers
@@ -35,6 +36,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 
 		public async Task<ActionResult<ReadProductDto>> CreatProductAsync([FromBody] CreateProductDto product)
 		{
@@ -46,6 +48,7 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(newProduct);
 		}
 		[HttpPut("id")]
+		[Authorize(Roles = "Admin")]
 
 		public async Task<ActionResult<ReadProductDto>> UpdateProductAsync(int id, [FromBody]UpdateProductDto productdto)
 		{
@@ -54,6 +57,8 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpDelete("id")]
+		[Authorize(Roles = "Admin")]
+
 		public async Task<ActionResult<bool>> DeleteProductByIdAsync(int id)
 		{
 			var result =await _productService.DeleteProductByIdAsync(id);	

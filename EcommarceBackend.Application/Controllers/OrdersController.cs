@@ -1,6 +1,7 @@
 ﻿using EcommearceBackend.Business.src.Dtos.Order;
 using EcommearceBackend.Business.src.Dtos.Product;
 using EcommearceBackend.Business.src.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace EcommarceBackend.Application.Controllers
 			_orderService = orderService;
 		}
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<ReadOrderDto>> GetAllOrdersAsync()
 		{
 			var orders = await _orderService.GetOrdersWithDetailsdAsync();
@@ -25,12 +27,15 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPost("Users/{userId}/Orders")]
+		[Authorize(Roles = "Admin,Customer")]
+
 		public async Task<ActionResult<ReadOrderDto>> CreatOrderAsync(int userId, [FromBody] CreateOrderDto orderDto)
 		{
 			var newOrder = await _orderService.CreateOrderAsync(userId, orderDto);
 			return Ok(newOrder);
 		}
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin,Customer")]
 
 		public async Task<ActionResult<ReadOrderDto>>GetOrderBIdAsync(int id)
 		{
@@ -43,6 +48,8 @@ namespace EcommarceBackend.Application.Controllers
 		return Ok(await _orderService.DeleteOrderByIdAsync(id));
 		}
 		[HttpGet("User/{userId}")]
+		[Authorize(Roles = "Admin")]
+
 		public async Task<ActionResult<IEnumerable<ReadProductDto>>> GetOrderByUserIdAsync(int userId)
 		{ 
 		var userOrders=await _orderService.GetOrdersByUserIdAsync(userId);

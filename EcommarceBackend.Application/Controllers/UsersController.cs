@@ -37,6 +37,8 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
+
 		public async Task<ActionResult<IEnumerable<ReadUserDto>>> GetAllUsersAsync([FromQuery] QueryOptions queryOptions)
 		{
 			var users = await _userService.GetAllUsersAsync(queryOptions);
@@ -44,7 +46,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[Authorize]
+		[Authorize(Policy = "ProfileOwnerOnly")]
 		public async Task<ActionResult<ReadUserDto>> GetUserByIdAsync(int id)
 		{
 			var requestingUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -64,6 +66,8 @@ namespace EcommarceBackend.Application.Controllers
 			return Forbid();
 		}
 		[HttpGet("Email/{email}")]
+		[Authorize(Roles = "Admin")]
+
 		public async Task<ActionResult<ReadUserDto>> GetUserByEmailAsnc(string email)
 		{
 			var user = await _userService.GetUserByEmailAsync(email);
@@ -74,6 +78,7 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(user);
 		}
 		[HttpDelete("{id}")]
+		[Authorize(Policy = "ProfileOwnerOnly")]
 		public async Task<ActionResult<bool>> DeleteUserByIdAsync(int id)
 		{
 			var requestingUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -97,6 +102,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPut("{id}")]
+		[Authorize (Policy= "ProfileOwnerOnly")]
 		public async Task<ActionResult<ReadUserDto>> UpdateUserAsync(int id, [FromBody] UpdateUserDto updateUserDto)
 		{
 			var requestingUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -117,6 +123,8 @@ namespace EcommarceBackend.Application.Controllers
 			return Forbid();
 		}
 		[HttpPost("Admin/")]
+		[Authorize(Roles = "Admin")]
+
 		public async Task<ActionResult<ReadUserDto>> CreateAdminAsync([FromBody] CreateUserDto userDto)
 		{
 			var adminUser = await _userService.CreateAdminAsync(userDto);

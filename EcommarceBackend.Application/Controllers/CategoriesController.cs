@@ -2,6 +2,7 @@
 using EcommearceBackend.Business.src.Dtos.Product;
 using EcommearceBackend.Business.src.Services.Abstractions;
 using EcommerceBackend.Domain.src.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<ReadCategoryDto>> CreateCategoryAsync([FromBody] CreateCategoryDto categoryDto)
 		{
 			var category = await _categoryService.CreateCategoryAsync(categoryDto);
@@ -42,12 +44,14 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(category);
 		}
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<ReadCategoryDto>> UpdateCategoryAsync(int id, [FromBody] UpdateCategoryDto categoryDto)
 		{
 			var category = await _categoryService.UpdateCategoryAsync(id, categoryDto);
 			return Ok(categoryDto);
 		}
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<bool>> DeleteCategoryAsync(int id)
 		{
 			var result = await _categoryService.DeleteCategoryAsync(id);
