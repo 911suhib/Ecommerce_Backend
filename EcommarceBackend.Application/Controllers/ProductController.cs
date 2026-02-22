@@ -47,7 +47,7 @@ namespace EcommarceBackend.Application.Controllers
 			var newProduct = await _productService.CreateProductAsync(product);
 			return Ok(newProduct);
 		}
-		[HttpPut("id")]
+		[HttpPut("{id}")]
 		[Authorize(Roles = "Admin")]
 
 		public async Task<ActionResult<ReadProductDto>> UpdateProductAsync(int id, [FromBody]UpdateProductDto productdto)
@@ -56,7 +56,7 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(product);
 		}
 
-		[HttpDelete("id")]
+		[HttpDelete("{id}")]
 		[Authorize(Roles = "Admin")]
 
 		public async Task<ActionResult<bool>> DeleteProductByIdAsync(int id)

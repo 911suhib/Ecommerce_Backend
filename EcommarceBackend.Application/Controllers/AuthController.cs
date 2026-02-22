@@ -26,7 +26,7 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(await _authService.RefreshToken(token.RefereshToken));
 		}
 		[HttpGet("profile")]
-		[Authorize]
+		[Authorize(Policy = "ProfileOwnerOnly")]
 		public async Task<ActionResult<ReadUserDto>> GetUserProfileAsync()
 		{
 			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -43,10 +43,11 @@ namespace EcommarceBackend.Application.Controllers
 			}
 			return Ok(user);
 		}
+		[Authorize(Policy = "ProfileOwnerOnly")]
 		[HttpPost("logout")]
-		public async Task<IActionResult> Logout(string request)
+		public async Task<IActionResult> Logout(UserRefereshTokenDto request)
 		{
-			await _jwtManager.RevokeAsync(request);
+			await _jwtManager.RevokeAsync(request.RefereshToken);
 
 			return Ok();
 		}

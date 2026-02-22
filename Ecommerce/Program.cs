@@ -4,14 +4,14 @@ using EcommearceBackend.Business.src.Services.Common;
 using EcommearceBackend.Business.src.Services.Implementations;
 using EcommerceBackend.Domain.src.Abstractions;
 using EcommerceBackend.Framework.src.Authentication;
-using EcommerceBackend.Framework.src.Authentication.OptionsSetup;
-using EcommerceBackend.Framework.src.Database;
+ using EcommerceBackend.Framework.src.Database;
 using EcommerceBackend.Framework.src.Middleware;
 using EcommerceBackend.Framework.src.Repositories;
 using Ganss.Xss;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,8 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			ValidAudience = jwtSection["Audience"],
 			IssuerSigningKey = new SymmetricSecurityKey(
 				Encoding.UTF8.GetBytes(jwtSection["SecretKey"])
-			),
-			ClockSkew=TimeSpan.Zero
+			)
 		};
 		options.Events = new JwtBearerEvents
 		{
@@ -63,6 +62,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			}
 		};
 	});
+builder.Services.AddAuthorization(
+	option=>
+	{
+		option.AddPolicy("OrderOwnerOrAdmin", policy =>
+		policy.RequireAssertion(context =>
+		{
+			var role=context.User.FindFirst(ClaimTypes.Role)?.Value;
+
+			if (role == "Admin")
+				return true;
+
+			var userIdFromToken=context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+			var httpContext = context.Resource as HttpContext;
+
+			var userIdFromRout = httpContext?.Request.RouteValues["id"]?.ToString();
+			return userIdFromToken == userIdFromRout;
+		})
+		);
+		
+		
+	}
+
+	);
+
 
 builder.Services.AddScoped<ISanitizerService, SanitizerService>();
 builder.Services.AddScoped<IUserService, UserService>();

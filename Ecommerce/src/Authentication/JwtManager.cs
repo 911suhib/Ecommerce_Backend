@@ -34,6 +34,7 @@ namespace EcommerceBackend.Framework.src.Authentication
 			{
 				new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
 				new Claim (ClaimTypes.Email,user.Email),
+				new Claim(ClaimTypes.Role,user.Role.ToString()),
 				new Claim(ClaimTypes.Role,user.Role.ToString())
 			};
 			var securitKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
@@ -44,7 +45,7 @@ namespace EcommerceBackend.Framework.src.Authentication
 			{
 				Issuer = _options.Issuer,
 				Audience = _options.Audience,
-				Expires = DateTime.UtcNow.AddMinutes(2),
+				Expires = DateTime.UtcNow.AddMinutes(15),
 				Subject = new ClaimsIdentity(claims),
 				SigningCredentials = signingCredentials
 			};
