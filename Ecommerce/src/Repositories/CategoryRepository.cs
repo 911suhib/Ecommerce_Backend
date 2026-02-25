@@ -29,5 +29,13 @@ namespace EcommerceBackend.Framework.src.Repositories
 		{
 			return await _categories.AsNoTracking().FirstOrDefaultAsync(c=>c.Name.ToLower()==categoryName.ToLower());
 		}
+
+		public async Task<string> GetNameCategory(int id)
+		{
+			var category = await _categories.FindAsync(id);
+			if (category == null)
+				return null;
+			return category.Name;
+		}
 	}
 }

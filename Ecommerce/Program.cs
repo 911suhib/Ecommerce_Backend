@@ -62,6 +62,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			}
 		};
 	});
+
+builder.Services.AddCors(option =>
+{
+	option.AddPolicy("AllowAllFrontends", policy => policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod());
+});
+
 builder.Services.AddAuthorization(
 	option=>
 	{
@@ -99,6 +105,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 var app = builder.Build();
+app.UseCors("AllowAllFrontends");
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseStaticFiles();
 if (app.Environment.IsDevelopment())

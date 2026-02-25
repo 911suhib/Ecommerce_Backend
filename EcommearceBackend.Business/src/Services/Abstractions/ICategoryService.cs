@@ -15,5 +15,7 @@ namespace EcommearceBackend.Business.src.Services.Abstractions
 		Task<ReadCategoryDto> UpdateCategoryAsync(int categoryId, UpdateCategoryDto categoryDto);
 		Task<bool> DeleteCategoryAsync(int categoryId);
 		Task<IEnumerable<ReadProductDto>> GetAllProductsInCategoryAsync(int categoryId);
+
+		Task<string> GetCategoryName(int categoryId);
 	}
 }

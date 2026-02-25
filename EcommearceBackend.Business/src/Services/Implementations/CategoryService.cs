@@ -91,6 +91,12 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 
 		}
 
+		public async Task<string> GetCategoryName(int categoryId)
+		{
+			var name = await _categoryRepository.GetNameCategory(categoryId)??throw new ArgumentException($"Category not found");
+		 return	name;
+		}
+
 		public async Task<ReadCategoryDto> UpdateCategoryAsync(int categoryId, UpdateCategoryDto categoryDto)
 		{
 			var existingCategory = await _categoryRepository.GetByIdAsync(categoryId)

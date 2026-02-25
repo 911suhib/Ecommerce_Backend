@@ -2,6 +2,7 @@
 using EcommearceBackend.Business.src.Services.Abstractions;
 using EcommerceBackend.Domain.src.Common;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommarceBackend.Application.Controllers
@@ -12,10 +13,11 @@ namespace EcommarceBackend.Application.Controllers
 	{
 	
 	   private readonly IProductService _productService;
-
-		public ProductController(IProductService productService)
+		private readonly ICategoryService _categoryService;
+		public ProductController(IProductService productService,ICategoryService categoryService)
 		{
 			_productService = productService;
+			_categoryService = categoryService;
 		}
 
 		[HttpGet]
@@ -68,6 +70,28 @@ namespace EcommarceBackend.Application.Controllers
 
 			}
 			return Ok(result);
+		}
+		[HttpPost("upload-image")]
+		[Authorize(Roles ="Admin")]
+ 		public async Task<IActionResult> UploadImage(IFormFile file, [FromForm] int Category)
+		{
+			if (file == null || file.Length == 0)
+				return BadRequest("No file uploaded");
+
+			var category =await _categoryService.GetCategoryName(Category);
+
+			var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/images/Products/{category}");
+			if (!Directory.Exists(uploadsFolder))
+				Directory.CreateDirectory(uploadsFolder);
+
+			var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+			var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+			using (var stream=new FileStream(filePath, FileMode.Create))
+			{
+				await file.CopyToAsync(stream);
+			}
+			return Ok(new { imageUrl = uniqueFileName });
 		}
 	}
 }

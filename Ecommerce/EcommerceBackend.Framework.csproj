@@ -31,4 +31,8 @@
     <ProjectReference Include="..\EcommerceBackend.Domain\EcommerceBackend.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\Products\" />
+  </ItemGroup>
+
 </Project>
