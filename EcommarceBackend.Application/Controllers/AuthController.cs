@@ -51,5 +51,10 @@ namespace EcommarceBackend.Application.Controllers
 
 			return Ok();
 		}
+		[HttpPost("verify")]
+		public async Task<string> VerifyEmailAsync(string email, string code) { 
+		var verify= await _authService.VerifyEmail(email, code);
+		return verify;
+		}
 	}
 }

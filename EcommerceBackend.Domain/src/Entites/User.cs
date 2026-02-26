@@ -16,6 +16,8 @@ namespace EcommerceBackend.Domain.Entities
         public ICollection<Order> Orders { get; set; } = new List<Order>();
 
 		public ICollection<UserRefreshToken> RefreshTokens { get; set; }
-
+		public string? EmailVerificationCode { get; set; }
+		public DateTime? VerificationCodeExpiry { get; set; }
+		public bool IsEmailVerified { get; set; } = false;
 	}
 }

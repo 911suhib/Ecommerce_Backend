@@ -17,11 +17,13 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 		private readonly IUserRepository _userRepository;
 		private readonly ISanitizerService _sanitizerService;
 		private readonly IMapper _mapper;
-		public UserService(IUserRepository userRepository, ISanitizerService sanitizerService, IMapper mapper)
+		private readonly IEmailService _emailService;
+		public UserService(IUserRepository userRepository, ISanitizerService sanitizerService, IMapper mapper, IEmailService emailService)
 		{
 			_userRepository = userRepository;
 			_sanitizerService = sanitizerService;
 			_mapper = mapper;
+			_emailService = emailService;
 		}
 
 		public async Task<ReadUserDto> CreateAdminAsync(CreateUserDto userDto)
@@ -29,7 +31,11 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 			try
 			{
 				var sanitizedDto = _sanitizerService.SanitizeDto(userDto);
-				var existingUser = _userRepository.GetUserByEmailAsync(sanitizedDto.Email);
+				var existingUser = await _userRepository.GetUserByEmailAsync(sanitizedDto.Email);
+				if (existingUser is not null)
+				{
+					throw new ArgumentException("A user with this email already exist.");
+				}
 				var userDtoProperties = typeof(CreateUserDto).GetProperties();
 				foreach (var property in userDtoProperties)
 				{
@@ -45,11 +51,8 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 				{
 					throw new ArgumentException("Invalid Email address.");
 				}
-
-				if (existingUser is not null)
-				{
-					throw new ArgumentException("A user with this email already exist.");
-				}
+				
+				
 
 				var userEntity = _mapper.Map<User>(sanitizedDto);
 
@@ -57,6 +60,8 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 				userEntity.HashedPassword = hashedPassword;
 
 				userEntity = await _userRepository.CreateAdminAsync(userEntity);
+
+				userEntity = await Verification(userEntity);
 
 				var readUserDto = _mapper.Map<ReadUserDto>(userEntity);
 				return readUserDto;
@@ -73,6 +78,29 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 				throw;
 			}
 		}
+		private async Task<User> Verification(User user)
+		{
+			var otp = new Random().Next(100000, 999999).ToString();
+			user.EmailVerificationCode = otp;
+			user.VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(5);
+			user.IsEmailVerified = false;
+			await _userRepository.UpdateAsync(user.Id,user);
+			string subject = "رمز تفعيل الحساب";
+			string htmlMessage = $@"
+<div style='font-family: Arial; text-align:center;'>
+    <h2>رمز التفعيل الخاص بك:</h2>
+    <h1>{otp}</h1>
+    <p>صالح لمدة 5 دقائق فقط</p>
+</div>";
+			var emailSent = await _emailService.SendEmailAsync(user.Email, subject, htmlMessage);
+			if (!emailSent)
+			{
+				throw new ArgumentException("not found Email");
+			}
+			return user;
+
+		}
+
 
 		public async Task<ReadUserDto> CreateUserAsync(CreateUserDto userDto)
 		{
@@ -97,6 +125,7 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 					}
 				}
 				bool IsValidEmail = Validator.IsValidEmail(sanitizedDto.Email);
+
 				if (!IsValidEmail)
 				{
 					throw new ArgumentException("Invalid Email address.");
@@ -106,6 +135,9 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 				var hashedPassword = BCrypt.Net.BCrypt.HashPassword(sanitizedDto.Password);
 				userEntity.HashedPassword = hashedPassword;
 				userEntity = await _userRepository.AddAsync(userEntity);
+				
+				userEntity=await Verification(userEntity);
+
 				var readUserDto = _mapper.Map<ReadUserDto>(userEntity);
 				return readUserDto;
 

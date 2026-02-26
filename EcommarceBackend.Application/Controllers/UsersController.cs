@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EcommearceBackend.Business.Abstractions;
 using EcommearceBackend.Business.src.Dtos.UserDtos;
+using EcommearceBackend.Business.src.Services.Abstractions;
 using EcommerceBackend.Domain.src.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,9 @@ namespace EcommarceBackend.Application.Controllers
 	{
 
 		private readonly IUserService _userService;
-		private readonly IMapper _mapper;
+ 		private readonly IMapper _mapper;
 
-		public UsersController(IUserService userService, IMapper mapper)
+		public UsersController(IUserService userService, IMapper mapper,IEmailService emailService)
 		{
 			_userService = userService;
 			_mapper = mapper;

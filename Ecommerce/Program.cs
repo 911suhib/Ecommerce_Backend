@@ -25,7 +25,7 @@ builder.Services.AddTransient<LoggingMiddleWare>();
  
 builder.Services.AddControllers();
 
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<HtmlSanitizer>();        
  builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
