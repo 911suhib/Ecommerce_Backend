@@ -36,14 +36,14 @@ namespace EcommarceBackend.Application.Controllers
 
 		[HttpPost("login")]
 		[EnableRateLimiting("OtpPolicy")]
-		
+
 
 		public async Task<ActionResult<string>> AuthenticateUserAsync([FromBody] UserCredentialsDto userCredentialsDto)
 		{
 			return Ok(await _authService.AutheticateUser(userCredentialsDto));
 		}
-	
-	   [HttpPost("token")]
+
+		[HttpPost("token")]
 		public async Task<ActionResult<string>> RefreshTokenAsync([FromBody] UserRefereshTokenDto token)
 		{
 			return Ok(await _authService.RefreshToken(token.RefereshToken));
@@ -81,11 +81,11 @@ namespace EcommarceBackend.Application.Controllers
 		[EnableRateLimiting("OtpPolicy")]
 
 		public async Task<ActionResult<string>> VerifyEmailAsync([FromQuery] string email, [FromQuery] string code)
-		{ 
-		var verify= await _authService.VerifyEmail(email, code);
-		return verify;
+		{
+			var verify = await _authService.VerifyEmail(email, code);
+			return verify;
 		}
- 		[HttpPost("Regester")]
+		[HttpPost("Regester")]
 		public async Task<ActionResult<ReadUserDto>> CreateUserAsync([FromBody] CreateUserDto createUserDto)
 		{
 			if (!ModelState.IsValid)
@@ -96,6 +96,7 @@ namespace EcommarceBackend.Application.Controllers
 			var userDto = _mapper.Map<ReadUserDto>(user);
 			return Ok(userDto);
 		}
+		[HttpPost("Register")]
 		public async Task<ActionResult<ReadUserDto>> CreateAdminAsync([FromBody] CreateUserDto userDto)
 		{
 			if (!ModelState.IsValid)
@@ -123,7 +124,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 		[HttpPost("check-code")]
 
-		public async Task<IActionResult > CheckCode([FromBody] VerifyCodeDto request)
+		public async Task<IActionResult> CheckCode([FromBody] VerifyCodeDto request)
 		{
 			try
 			{
@@ -142,7 +143,7 @@ namespace EcommarceBackend.Application.Controllers
 			{
 				var user = await _authService.ResetPasswordHashed(request.Email, request.Code, request.NewPassword);
 
-   
+
 				return Ok(new { success = true, message = "Password changed successfully" });
 			}
 			catch (ArgumentException ex)
