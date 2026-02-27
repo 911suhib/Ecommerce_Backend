@@ -1,4 +1,4 @@
-﻿using EcommerceBackend.Domain.src.Abstractions;
+﻿ using EcommerceBackend.Domain.src.Abstractions;
 using EcommerceBackend.Domain.src.Entites;
 using EcommerceBackend.Framework.src.Database;
 using Microsoft.EntityFrameworkCore;
@@ -36,9 +36,9 @@ namespace EcommerceBackend.Framework.src.Repositories
 			}
 			return true;
 		}
-		public async Task RevokeAsync(string refreshToken)
+		public async Task RevokeAsync(int userId)
 		{
-			var token = await _userRefreshTokens.FirstOrDefaultAsync(x=>x.RefreshToken==refreshToken);
+			var token = await _userRefreshTokens.FirstOrDefaultAsync(x=>x.UserId==userId);
 
 			if (token != null)
 			{

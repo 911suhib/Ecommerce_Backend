@@ -70,7 +70,7 @@ namespace EcommerceBackend.Framework.src.Authentication
 			return  GenerateAccessToken(user);
 
 		}
-		public async Task RevokeAsync(string refreshToken)
+		public async Task RevokeAsync(int refreshToken)
 		{
 			 await _refreshTokenRepository.RevokeAsync(refreshToken);	
 		}

@@ -9,7 +9,7 @@ namespace EcommearceBackend.Business.src.Services.Abstractions
 	{
 		public string GenerateAccessToken(User user);
 		public Task<string> RefreshAccessToken(string refreshToken);
-		public Task RevokeAsync(string refreshToken);
+		public Task RevokeAsync(int  id);
 
 
 	}

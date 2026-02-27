@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "EcommarceBackend.Application": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:64184;http://localhost:64185"
+    }
+  }
+}

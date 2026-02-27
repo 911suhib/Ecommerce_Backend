@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,7 +93,18 @@ builder.Services.AddAuthorization(
 	}
 
 	);
+builder.Services.AddRateLimiter(options => {
+	options.AddPolicy("OtpPolicy", context => RateLimitPartition.GetFixedWindowLimiter(
+		partitionKey: context.Connection.RemoteIpAddress?.ToString(),
+		factory: _ => new FixedWindowRateLimiterOptions { 
+		PermitLimit=3,
+		Window=TimeSpan.FromMinutes(10),
+		QueueProcessingOrder=QueueProcessingOrder.OldestFirst,
+		QueueLimit=0
+		}
+		));
 
+});
 
 builder.Services.AddScoped<ISanitizerService, SanitizerService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -122,7 +134,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
+app.UseRateLimiter();
 
 
 app.MapControllers();

@@ -25,17 +25,7 @@ namespace EcommarceBackend.Application.Controllers
 			_userService = userService;
 			_mapper = mapper;
 		}
-		[HttpPost]
-		public async Task<ActionResult<ReadUserDto>> CreateUserAsync([FromBody] CreateUserDto createUserDto)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-			var user = await _userService.CreateUserAsync(createUserDto);
-			var userDto = _mapper.Map<ReadUserDto>(user);
-			return Ok(userDto);
-		}
+ 
 
 		[HttpGet]
 		[Authorize(Roles = "Admin")]
@@ -123,13 +113,7 @@ namespace EcommarceBackend.Application.Controllers
 			}
 			return Forbid();
 		}
-		[HttpPost("Admin/")]
-		[Authorize(Roles = "Admin")]
-
-		public async Task<ActionResult<ReadUserDto>> CreateAdminAsync([FromBody] CreateUserDto userDto)
-		{
-			var adminUser = await _userService.CreateAdminAsync(userDto);
-			return Ok(adminUser);
-		}
+	 
+		
 	}
 }

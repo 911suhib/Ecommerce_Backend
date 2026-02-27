@@ -1,4 +1,5 @@
-﻿using EcommerceBackend.Domain.src.Entites;
+﻿using EcommerceBackend.Domain.Entities;
+using EcommerceBackend.Domain.src.Entites;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,7 @@ namespace EcommerceBackend.Domain.src.Abstractions
 {
 	public interface IRefreshTokenRepository
 	{
-		public  Task RevokeAsync(string refreshToken);
+		public  Task RevokeAsync(int userId);
 
 		Task<string> AddRefreshToken(UserRefreshToken userRef);
  		Task<bool> ValidateRefreshTokenAsync(int userId, string refreshToken);
