@@ -37,7 +37,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[Authorize(Policy = "ProfileOwnerOnly")]
+		[Authorize(Policy = "OrderOwnerOrAdmin")]
 		public async Task<ActionResult<ReadUserDto>> GetUserByIdAsync(int id)
 		{
 			var requestingUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

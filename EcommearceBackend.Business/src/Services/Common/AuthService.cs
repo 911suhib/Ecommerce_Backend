@@ -229,6 +229,7 @@ public class AuthService : IAuthService
 
 				var hashedPassword = BCrypt.Net.BCrypt.HashPassword(sanitizedDto.Password);
 				userEntity.HashedPassword = hashedPassword;
+				userEntity.Role = UserRole.Customer;
 				userEntity = await _userRepository.AddAsync(userEntity);
 
 				userEntity = await Verification(userEntity);

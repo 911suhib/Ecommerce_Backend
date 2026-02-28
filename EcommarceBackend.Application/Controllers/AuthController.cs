@@ -35,8 +35,7 @@ namespace EcommarceBackend.Application.Controllers
 
 
 		[HttpPost("login")]
-		[EnableRateLimiting("OtpPolicy")]
-
+ 
 
 		public async Task<ActionResult<string>> AuthenticateUserAsync([FromBody] UserCredentialsDto userCredentialsDto)
 		{
@@ -96,7 +95,7 @@ namespace EcommarceBackend.Application.Controllers
 			var userDto = _mapper.Map<ReadUserDto>(user);
 			return Ok(userDto);
 		}
-		[HttpPost("Register")]
+		[HttpPost("RegisterAdmin")]
 		public async Task<ActionResult<ReadUserDto>> CreateAdminAsync([FromBody] CreateUserDto userDto)
 		{
 			if (!ModelState.IsValid)
