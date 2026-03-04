@@ -39,7 +39,12 @@ namespace EcommarceBackend.Application.Controllers
 
 		public async Task<ActionResult<string>> AuthenticateUserAsync([FromBody] UserCredentialsDto userCredentialsDto)
 		{
-			return Ok(await _authService.AutheticateUser(userCredentialsDto));
+			
+			
+				var token = await _authService.AutheticateUser(userCredentialsDto);
+				return Ok(token);
+			
+			 
 		}
 
 		[HttpPost("token")]
@@ -84,6 +89,10 @@ namespace EcommarceBackend.Application.Controllers
 			var verify = await _authService.VerifyEmail(email, code);
 			return verify;
 		}
+
+
+
+
 		[HttpPost("Regester")]
 		public async Task<ActionResult<ReadUserDto>> CreateUserAsync([FromBody] CreateUserDto createUserDto)
 		{
@@ -91,10 +100,15 @@ namespace EcommarceBackend.Application.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-			var user = await _authService.CreateUserAsync(createUserDto);
-			var userDto = _mapper.Map<ReadUserDto>(user);
-			return Ok(userDto);
+			 
+				var user = await _authService.CreateUserAsync(createUserDto);
+				return Ok(user);
+			 
 		}
+
+
+
+
 		[HttpPost("RegisterAdmin")]
 		public async Task<ActionResult<ReadUserDto>> CreateAdminAsync([FromBody] CreateUserDto userDto)
 		{

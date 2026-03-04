@@ -7,6 +7,7 @@ using EcommerceBackend.Domain.Entities;
 using EcommerceBackend.Domain.src.Abstractions;
 using EcommerceBackend.Domain.src.Common;
 using EcommerceBackend.Domain.src.Entites;
+using EcommerceBackend.Domain.src.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -36,10 +37,10 @@ public class AuthService : IAuthService
 		public async Task<string> AutheticateUser(UserCredentialsDto userCredentials)
 		{
 			var user=await _userRepository.GetUserByEmailAsync(userCredentials.Email)
-			?? throw new ArgumentException("Invalid login credentials.");
+			?? throw new BadRequestException("Invalid login credentials.");
 			if (!user.IsEmailVerified )
 			{
-				throw new ArgumentException("The email is not verified");
+				throw new BadRequestException("The email is not verified");
 			}
 			if(user.IsDeleted)
 				throw new ArgumentException("The account is not found");
@@ -149,7 +150,7 @@ public class AuthService : IAuthService
 
 					}
 
-					throw new ArgumentException("A user with this email already exist.");
+					throw new ConflictException("A user with this email already exist.");
 				}
 				var userDtoProperties = typeof(CreateUserDto).GetProperties();
 				foreach (var property in userDtoProperties)
@@ -164,7 +165,7 @@ public class AuthService : IAuthService
 
 				if (!IsValidEmail)
 				{
-					throw new ArgumentException("Invalid Email address.");
+					throw new BadRequestException("Invalid Email address.");
 				}
 
 
@@ -209,7 +210,7 @@ public class AuthService : IAuthService
 
 					}
 
-					throw new ArgumentException("A user with this email already exist.");
+					throw new ConflictException("A user with this email already exist.");
 				}
 
 				var userDtoProperties = typeof(CreateUserDto).GetProperties();

@@ -144,6 +144,7 @@ if (app.Environment.IsDevelopment())
 
 }
 app.UseMiddleware<LoggingMiddleWare>();
+app.UseMiddleware<GlobalExceptionMiddlewate>();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
