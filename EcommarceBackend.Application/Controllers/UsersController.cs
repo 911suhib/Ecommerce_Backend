@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 
+ 
 namespace EcommarceBackend.Application.Controllers
 {
 	[ApiController]
@@ -69,7 +70,7 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(user);
 		}
 		[HttpDelete("{id}")]
-		[Authorize(Policy = "ProfileOwnerOnly")]
+		[Authorize(Policy = "ProfileOwnerOnlyPolicy")]
 		public async Task<ActionResult<bool>> DeleteUserByIdAsync(int id)
 		{
 			var requestingUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -93,7 +94,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPut("{id}")]
-		[Authorize (Policy= "ProfileOwnerOnly")]
+		[Authorize (Policy= "ProfileOwnerOnlyPolicy")]
 		public async Task<ActionResult<ReadUserDto>> UpdateUserAsync(int id, [FromBody] UpdateUserDto updateUserDto)
 		{
 			var requestingUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

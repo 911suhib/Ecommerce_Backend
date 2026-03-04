@@ -36,7 +36,7 @@ namespace EcommearceBackend.Business.src.Services.Implementations
 			{
 				return false;
 			}
-			return await _userRepository.DeleteByIdAsync(userId);
+			return await _userRepository.DeleteUser(userId);
 		}
 
 		public async Task<IEnumerable<ReadUserDto>> GetAllUsersAsync(QueryOptions queryOptions)

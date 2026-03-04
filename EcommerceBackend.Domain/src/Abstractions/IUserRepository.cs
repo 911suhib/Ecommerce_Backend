@@ -7,5 +7,7 @@ namespace EcommerceBackend.Domain.src.Abstractions
 		Task<User> GetUserByEmailAsync(string email);
 		Task<User> CreateAdminAsync(User user);
 		Task<User> UpdatePassword(string email, string PasswordHash);
+
+		Task<bool> DeleteUser(int id);
 	}
 }

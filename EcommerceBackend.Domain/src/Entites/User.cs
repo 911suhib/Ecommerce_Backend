@@ -15,6 +15,7 @@ namespace EcommerceBackend.Domain.Entities
         public required UserRole Role { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>();
 
+		public required bool IsDeleted { get; set; }
 		public ICollection<UserRefreshToken> RefreshTokens { get; set; }
 		public string? EmailVerificationCode { get; set; }
 		public DateTime? VerificationCodeExpiry { get; set; }

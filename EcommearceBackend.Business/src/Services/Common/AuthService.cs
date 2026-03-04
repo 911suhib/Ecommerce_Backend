@@ -37,10 +37,13 @@ public class AuthService : IAuthService
 		{
 			var user=await _userRepository.GetUserByEmailAsync(userCredentials.Email)
 			?? throw new ArgumentException("Invalid login credentials.");
-			if (!user.IsEmailVerified)
+			if (!user.IsEmailVerified )
 			{
 				throw new ArgumentException("The email is not verified");
 			}
+			if(user.IsDeleted)
+				throw new ArgumentException("The account is not found");
+
 
 			var isAuthenticated = PasswordService.VerifyPassword(user.HashedPassword, userCredentials.Password);
 
@@ -62,7 +65,7 @@ public class AuthService : IAuthService
 				IsRevoked = false
 				
 			};
-			_refreshTokenRepository.AddRefreshToken(userRefresh);
+			await _refreshTokenRepository.AddRefreshToken(userRefresh);
 			return token;
 
 		}
@@ -230,6 +233,7 @@ public class AuthService : IAuthService
 				var hashedPassword = BCrypt.Net.BCrypt.HashPassword(sanitizedDto.Password);
 				userEntity.HashedPassword = hashedPassword;
 				userEntity.Role = UserRole.Customer;
+				userEntity.IsDeleted = false;
 				userEntity = await _userRepository.AddAsync(userEntity);
 
 				userEntity = await Verification(userEntity);

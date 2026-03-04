@@ -88,9 +88,23 @@ builder.Services.AddAuthorization(
 			return userIdFromToken == userIdFromRout;
 		})
 		);
+
+		option.AddPolicy("ProfileOwnerOnlyPolicy", policy =>
+		policy.RequireAssertion(context => {
+
+			var userIdFromToken = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+			var httpContext = context.Resource as HttpContext;
+
+			var userIdFromRout = httpContext?.Request.RouteValues["id"]?.ToString();
+
+			return userIdFromRout == userIdFromToken;
 		
-		
+		})
+		);
+
 	}
+
 
 	);
 builder.Services.AddRateLimiter(options => {
