@@ -1,8 +1,10 @@
-﻿namespace EcommerceBackend.Domain.src.Exceptions
+﻿using System.Net;
+
+namespace EcommerceBackend.Domain.src.Exceptions
 {
-	public class ConflictException:Exception
+	public class ConflictException:AppException
 	{
-		public ConflictException(string message):base(message)
+		public ConflictException(string message):base(message,(int)HttpStatusCode.Conflict)
 		{
 			
 		}

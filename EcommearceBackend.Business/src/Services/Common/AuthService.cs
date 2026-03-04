@@ -43,13 +43,13 @@ public class AuthService : IAuthService
 				throw new BadRequestException("The email is not verified");
 			}
 			if(user.IsDeleted)
-				throw new ArgumentException("The account is not found");
+				throw new NotFoundException("The account is not found");
 
-
+			
 			var isAuthenticated = PasswordService.VerifyPassword(user.HashedPassword, userCredentials.Password);
 
 			if (!isAuthenticated) {
-				throw new ArgumentException("Invalid login credentials");
+				throw new BadRequestException("Invalid login credentials");
 			}
 			var subject = "مرحبا بك مجدداََ";
 			var html = $@"<h1>Ecommarce_Welcome </h1>    <div style='color:blue;text-align:center;'><h3> welcome back {user.FName}   </h3> </div>";
@@ -206,7 +206,8 @@ public class AuthService : IAuthService
 					if (!existingUser.IsEmailVerified)
 					{
 						await Verification(existingUser);
-						throw new ArgumentException("Verification code resent. Please verify your email.");
+						
+						throw new EmailNotVerifiedException("Verification code resent. Please verify your email.");
 
 					}
 

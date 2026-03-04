@@ -1,7 +1,9 @@
-﻿namespace EcommerceBackend.Domain.src.Exceptions
+﻿using System.Net;
+
+namespace EcommerceBackend.Domain.src.Exceptions
 {
-	public class BadRequestException : Exception
+	public class BadRequestException : AppException
 	{
-		public BadRequestException(string message) : base(message) { }
+		public BadRequestException(string message) : base(message,(int)HttpStatusCode.BadRequest) { }
 	}
 }
