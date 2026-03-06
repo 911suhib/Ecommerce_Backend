@@ -38,8 +38,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Roles = "Admin")]
-
+ 
 		public async Task<ActionResult<ReadProductDto>> CreatProductAsync([FromBody] CreateProductDto product)
 		{
 			if (!ModelState.IsValid)
@@ -72,7 +71,6 @@ namespace EcommarceBackend.Application.Controllers
 			return Ok(result);
 		}
 		[HttpPost("upload-image")]
-		[Authorize(Roles ="Admin")]
  		public async Task<IActionResult> UploadImage(IFormFile file, [FromForm] int Category)
 		{
 			if (file == null || file.Length == 0)

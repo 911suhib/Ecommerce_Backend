@@ -33,9 +33,7 @@ namespace EcommerceBackend.Framework.src.Database
 			builder.HasOne(p => p.Category)
 				.WithMany(c => c.Products)
 				.HasForeignKey(p => p.CategoryId);
-			builder.HasOne(p => p.Brand)
-				.WithMany(b => b.Products)
-				.HasForeignKey(p => p.BrandId);
+		 
 
 		}
 	}

@@ -12,9 +12,7 @@
 		public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
 
-        public int BrandId { get; set; }
-        public virtual Brand Brand { get; set; }
-
+  
 		public int Inventory { get; set; }
 		public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
