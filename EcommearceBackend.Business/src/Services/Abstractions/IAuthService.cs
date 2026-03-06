@@ -8,11 +8,13 @@ namespace EcommearceBackend.Business.src.Services.Abstractions
 {
 	public interface IAuthService
 	{
+		Task<User> SendCode(string email);
+
 		Task<ReadUserDto> CreateUserAsync(CreateUserDto userDto);
 
 		Task<ReadUserDto> CreateAdminAsync(CreateUserDto userDto);
 
-		 Task<string> VerifyEmail(string email, string code);
+		 Task<User> VerifyEmail(string email, string code);
 
 		Task<string> AutheticateUser(UserCredentialsDto userCredentials);
 		Task<string> RefreshToken(string refreshToken);

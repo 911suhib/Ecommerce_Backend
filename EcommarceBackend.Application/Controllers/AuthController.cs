@@ -3,6 +3,7 @@ using EcommearceBackend.Business.Abstractions;
 using EcommearceBackend.Business.src.Dtos.PasswordChange;
 using EcommearceBackend.Business.src.Dtos.UserDtos;
 using EcommearceBackend.Business.src.Services.Abstractions;
+using EcommearceBackend.Business.src.Services.Common;
 using EcommerceBackend.Domain.src.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -83,11 +84,13 @@ namespace EcommarceBackend.Application.Controllers
 		}
 		[HttpPost("verify")]
 		[EnableRateLimiting("OtpPolicy")]
-
-		public async Task<ActionResult<string>> VerifyEmailAsync([FromQuery] string email, [FromQuery] string code)
+		public async Task<ActionResult<bool>> VerifyEmailAsync([FromBody] VerifyCodeDto dto)
 		{
-			var verify = await _authService.VerifyEmail(email, code);
-			return verify;
+			if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Code))
+				return BadRequest("Email or code missing");
+
+			var verify = await _authService.VerifyEmail(dto.Email, dto.Code);
+			return Ok(verify);
 		}
 
 
@@ -164,6 +167,12 @@ namespace EcommarceBackend.Application.Controllers
 				return BadRequest(new { success = false, message = ex.Message });
 			}
 		}
-	}
+		[HttpPost("SendCode")]
+		public async Task<IActionResult> SendCode([FromBody] SendCodeDto req)
+		{
+			var user =await _authService.SendCode(req.Email);
+			return Ok(new { success = true });
+		}
+ 	}
 
 }

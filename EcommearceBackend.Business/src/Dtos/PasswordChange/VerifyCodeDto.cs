@@ -8,5 +8,5 @@ namespace EcommearceBackend.Business.src.Dtos.PasswordChange
 	{
 		public string  Code { get; set; }
 		public string Email { get; set; }
-	}
+ 	}
 }

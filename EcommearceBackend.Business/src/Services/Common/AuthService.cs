@@ -70,22 +70,22 @@ public class AuthService : IAuthService
 			return token;
 
 		}
-		public async Task<string> VerifyEmail(string email,string code)
+		public async Task<User> VerifyEmail(string email,string code)
 		{
 			var user =await _userRepository.GetUserByEmailAsync(email);
 			if (user is null)
-				throw new ArgumentException("User not found");
+				throw new NotFoundException("User not found");
 
 			if (!BCrypt.Net.BCrypt.Verify(code,user.EmailVerificationCode))
-				throw new ArgumentException("Invalid code");
+				throw new ConflictException("Invalid code");
 
 			if (user.VerificationCodeExpiry < DateTime.UtcNow)
-				throw new ArgumentException("Code expired");
+				throw new ConflictException("Code expired");
 			user.IsEmailVerified = true;
 			user.EmailVerificationCode = null;
 			user.VerificationCodeExpiry = null;
 			await _userRepository.UpdateAsync(user.Id,user);
-			return "Email verified successfully";
+			return user;
 
 		}
 
@@ -114,7 +114,7 @@ public class AuthService : IAuthService
 			string otp = otpInt.ToString("D6");
 
 			string hashedOtp = BCrypt.Net.BCrypt.HashPassword(otp);
-
+			
 			user.EmailVerificationCode = hashedOtp;
 			user.VerificationCodeExpiry = DateTime.UtcNow.AddMinutes(5);
 			user.IsEmailVerified = false;
@@ -135,6 +135,16 @@ public class AuthService : IAuthService
 			return user;
 
 		}
+		
+		public async Task<User> SendCode(string email)
+		{
+			var user =await _userRepository.GetUserByEmailAsync(email);
+			if (user == null)
+				throw new NotFoundException("This email is not Found");
+			await Verification(user);
+			return user;
+		}
+
 		public async Task<ReadUserDto> CreateAdminAsync(CreateUserDto userDto)
 		{
 			try

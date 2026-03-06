@@ -54,6 +54,24 @@ namespace EcommerceBackend.Framework.src.Authentication
 			return tokenValue;
 		}
 
+		public string GenerateTempToken(string email)
+		{
+			var claims = new[] { new Claim(ClaimTypes.Email,email)};
+
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+
+			var creds= new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+			
+			var token=new JwtSecurityToken(
+				issuer:_options.Issuer,
+				audience: _options.Audience,
+				claims: claims,
+				expires: DateTime.UtcNow.AddMinutes(10),
+				signingCredentials: creds
+				);
+			return new JwtSecurityTokenHandler().WriteToken(token);
+		}
+
 		public async Task<string> RefreshAccessToken(string refreshToken)
 		{
 		 var token=await _refreshTokenRepository.GetByTokenAsync(refreshToken);
