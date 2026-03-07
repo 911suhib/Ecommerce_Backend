@@ -29,8 +29,7 @@ namespace EcommarceBackend.Application.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Roles = "Admin")]
-		public async Task<ActionResult<ReadCategoryDto>> CreateCategoryAsync([FromBody] CreateCategoryDto categoryDto)
+ 		public async Task<ActionResult<ReadCategoryDto>> CreateCategoryAsync([FromBody] CreateCategoryDto categoryDto)
 		{
 			var category = await _categoryService.CreateCategoryAsync(categoryDto);
 			return Ok(category);
