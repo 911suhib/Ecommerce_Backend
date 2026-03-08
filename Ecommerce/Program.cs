@@ -132,26 +132,24 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 var app = builder.Build();
 
- 
-using (var scope = app.Services.CreateScope())
-{
-	var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-	db.Database.Migrate();
-}
+
 
 
 app.UseCors("AllowAllFrontends");
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseStaticFiles();
-if (app.Environment.IsDevelopment())
-{
+
+
 	app.UseSwagger();
 	app.UseSwaggerUI(c =>
 	{
 		c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API V1");
 	});
+	using var serviceScope = app.Services.CreateScope();
+	using var dbConttext = serviceScope.ServiceProvider.GetService<AppDbContext>();
+	dbConttext.Database.Migrate();
 
-}
+
 app.UseMiddleware<LoggingMiddleWare>();
 app.UseMiddleware<GlobalExceptionMiddlewate>();
 // Configure the HTTP request pipeline.
